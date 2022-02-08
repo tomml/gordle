@@ -1,12 +1,10 @@
-# Chatty, a simple chatbot
+# GOrdle
 
-I am chatty, a simple chatbot written in Golang!
+A Worlde implemetation in Golang.
 
 # Usage
 
-blablabla
 
 # Parameters
 
-blablabla
 
