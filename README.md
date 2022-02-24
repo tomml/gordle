@@ -1,6 +1,6 @@
 # GOrdle
 
-A Worlde implemetation in Golang.
+A Worlde implementation in Golang.
 
 # Usage
 
