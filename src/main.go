@@ -50,6 +50,7 @@ func printGreetingRules() {
 	fmt.Println("A perfect match is marked as 'g'")
 	fmt.Println("A word in match is marked as 'y'")
 	fmt.Println("       No match is marked as 'x'")
+	fmt.Println()
 }
 
 func main() {
@@ -97,7 +98,7 @@ func main() {
 			matchedCnt = 0
 		}
 		fmt.Printf("   Your guess: %s", guess)
-		fmt.Printf("Guesses matched: %s\n", matched)
+		fmt.Printf("Guesses matched: %s\n\n", matched)
 		attemptsCnt++
 	}
 	fmt.Printf("Word to guess: %s. GREAT!!!\n", wordtoguess)
