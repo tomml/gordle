@@ -34,7 +34,7 @@ func getuserInput() (string, error) {
 	} else {
 		input = ""
 		inputerr = errors.New(
-			"Input is wrong, please provide a correct one.\nRemember: Your guess has to be a valid word of exactly six characters.\n")
+			"Input is wrong, please provide a correct one.\nRemember: Your guess has to be a valid word of exactly five characters.\n")
 	}
 
 	return input, inputerr
