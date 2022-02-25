@@ -4,21 +4,10 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"math/rand"
 	"os"
-	"time"
 )
 
-const (
-	WORD_MAX_LENGTH  = 5
-	GUESS_MAX_LENGTH = 6
-)
-
-var (
-	wordsList = []string{
-		"CIGAR", "REBUT", "SISSY", "DWARF", "QUIET", "STAFF",
-	}
-)
+const GUESS_MAX_LENGTH = 6
 
 func getuserInput() (string, error) {
 
@@ -29,20 +18,16 @@ func getuserInput() (string, error) {
 	reader := bufio.NewReader(os.Stdin)
 	input, erro := reader.ReadString('\n')
 
-	if erro == nil && len(input) == 6 {
+	if erro == nil && len(input) == 6 { // includes delimiter
 		// Input is correct
 	} else {
 		input = ""
 		inputerr = errors.New(
-			"Input is wrong, please provide a correct one.\nRemember: Your guess has to be a valid word of exactly five characters.\n")
+			`Input is wrong, please provide a correct one.
+       Remember: Your guess has to be a valid word of exactly five characters.`)
 	}
 
 	return input, inputerr
-}
-
-func getRandomWordFromList() string {
-	rand.Seed(time.Now().UnixNano())
-	return wordsList[rand.Intn(len(wordsList))]
 }
 
 func printGreetingRules() {
@@ -75,7 +60,7 @@ func main() {
 		}
 
 		for i := 0; i < WORD_MAX_LENGTH; i++ {
-			if rune(guess[i]) == rune(wordtoguess[i]) {
+			if byte(guess[i]) == byte(wordtoguess[i]) { // check for perfect match
 				matched[i] = "g"
 				matchedCnt++
 				if matchedCnt == WORD_MAX_LENGTH {
@@ -83,15 +68,15 @@ func main() {
 					break
 				}
 				continue
-			} else {
+			} else { // check for in-word match
 				matchedCnt = 0
 				for j := 0; j < WORD_MAX_LENGTH; j++ {
-					if rune(guess[i]) == rune(wordtoguess[j]) {
+					if byte(guess[i]) == byte(wordtoguess[j]) {
 						matched[i] = "y"
 						matchedCnt++
 					}
 				}
-				if matchedCnt == 0 {
+				if matchedCnt == 0 { // check for no match
 					matched[i] = "x"
 				}
 			}
@@ -101,6 +86,11 @@ func main() {
 		fmt.Printf("Guesses matched: %s\n\n", matched)
 		attemptsCnt++
 	}
-	fmt.Printf("Word to guess: %s. GREAT!!!\n", wordtoguess)
-	fmt.Printf("Your attempts: %d\n", attemptsCnt)
+
+	if guessIsCorrect == true {
+		fmt.Printf("Word to guess: %s. GREAT!!!\n", wordtoguess)
+		fmt.Printf("Your attempts: %d\n", attemptsCnt)
+	} else {
+		fmt.Printf("Try next time! The word you were looking for was: %s\n", wordtoguess)
+	}
 }
