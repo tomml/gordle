@@ -1,17 +1,17 @@
-package main
+package words
 
 import (
 	"math/rand"
 	"time"
 )
 
-const WORD_MAX_LENGTH = 5
+const WordMaxLength = 5
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func getRandomWordFromList() string {
+func GetRandomWordFromList() string {
 	return wordsList[rand.Intn(len(wordsList))]
 }
 

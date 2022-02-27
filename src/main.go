@@ -5,9 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"os"
+
+	"gordle/words"
 )
 
-const GUESS_MAX_LENGTH = 6
+const guessMaxLength = 6
 
 func getuserInput() (string, error) {
 
@@ -23,8 +25,8 @@ func getuserInput() (string, error) {
 	} else {
 		input = ""
 		inputerr = errors.New(
-			`Input is wrong, please provide a correct one.
-       Remember: Your guess has to be a valid word of exactly five characters.`)
+			`input is wrong, please provide a correct one.
+       Remember: Your guess has to be a valid word of exactly five characters`)
 	}
 
 	return input, inputerr
@@ -48,9 +50,9 @@ func main() {
 
 	printGreetingRules()
 	// Get a random word from the list
-	wordtoguess := getRandomWordFromList()
+	wordtoguess := words.GetRandomWordFromList()
 
-	for x := 0; x < GUESS_MAX_LENGTH && guessIsCorrect == false; x++ {
+	for x := 0; x < guessMaxLength && !guessIsCorrect; x++ {
 		for {
 			if guess, err = getuserInput(); err != nil {
 				fmt.Println(err)
@@ -59,18 +61,18 @@ func main() {
 			}
 		}
 
-		for i := 0; i < WORD_MAX_LENGTH; i++ {
+		for i := 0; i < words.WordMaxLength; i++ {
 			if byte(guess[i]) == byte(wordtoguess[i]) { // check for perfect match
 				matched[i] = "g"
 				matchedCnt++
-				if matchedCnt == WORD_MAX_LENGTH {
+				if matchedCnt == words.WordMaxLength {
 					guessIsCorrect = true
 					break
 				}
 				continue
 			} else { // check for in-word match
 				matchedCnt = 0
-				for j := 0; j < WORD_MAX_LENGTH; j++ {
+				for j := 0; j < words.WordMaxLength; j++ {
 					if byte(guess[i]) == byte(wordtoguess[j]) {
 						matched[i] = "y"
 						matchedCnt++
@@ -87,7 +89,7 @@ func main() {
 		attemptsCnt++
 	}
 
-	if guessIsCorrect == true {
+	if guessIsCorrect {
 		fmt.Printf("Word to guess: %s. GREAT!!!\n", wordtoguess)
 		fmt.Printf("Your attempts: %d\n", attemptsCnt)
 	} else {
