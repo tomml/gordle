@@ -5,18 +5,24 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"gordle/words"
 )
 
 const guessMaxLength = 6
 
+type guessMatchedType struct {
+	m byte   // one char of a word
+	s string // status of guess, either g, y or x
+}
+
 func getuserInput() (string, error) {
 
 	var input string = ""
 	var inputerr error = nil
 
-	fmt.Println("Enter your guess:")
+	fmt.Print("Enter your guess: ")
 	reader := bufio.NewReader(os.Stdin)
 	input, erro := reader.ReadString('\n')
 
@@ -29,7 +35,7 @@ func getuserInput() (string, error) {
        Remember: Your guess has to be a valid word of exactly five characters`)
 	}
 
-	return input, inputerr
+	return strings.ToUpper(input), inputerr
 }
 
 func printGreetingRules() {
@@ -40,15 +46,30 @@ func printGreetingRules() {
 	fmt.Println()
 }
 
-func main() {
+func printMatch(matched []guessMatchedType) {
+	for _, item := range matched {
+		if item.s == "g" {
+			fmt.Print("\033[42m\033[1;30m")
+		} else if item.s == "y" {
+			fmt.Print("\033[43m\033[1;30m")
+		} else {
+			fmt.Print("\033[40m\033[1;37m")
+		}
+		fmt.Printf(" %s ", string(item.m))
+		fmt.Print("\033[m\033[m")
+	}
+	fmt.Println()
+}
 
-	matched := make([]string, 5)
+func main() {
+	guessMatched := make([]guessMatchedType, 5)
 	var guessIsCorrect bool
 	var matchedCnt, attemptsCnt int
 	var guess string
 	var err error
 
 	printGreetingRules()
+
 	// Get a random word from the list
 	wordtoguess := words.GetRandomWordFromList()
 
@@ -63,7 +84,8 @@ func main() {
 
 		for i := 0; i < words.WordMaxLength; i++ {
 			if byte(guess[i]) == byte(wordtoguess[i]) { // check for perfect match
-				matched[i] = "g"
+				guessMatched[i].s = "g"
+				guessMatched[i].m = guess[i]
 				matchedCnt++
 				if matchedCnt == words.WordMaxLength {
 					guessIsCorrect = true
@@ -74,18 +96,19 @@ func main() {
 				matchedCnt = 0
 				for j := 0; j < words.WordMaxLength; j++ {
 					if byte(guess[i]) == byte(wordtoguess[j]) {
-						matched[i] = "y"
+						guessMatched[i].s = "y"
+						guessMatched[i].m = guess[i]
 						matchedCnt++
 					}
 				}
 				if matchedCnt == 0 { // check for no match
-					matched[i] = "x"
+					guessMatched[i].s = "x"
+					guessMatched[i].m = guess[i]
 				}
 			}
 			matchedCnt = 0
 		}
-		fmt.Printf("   Your guess: %s", guess)
-		fmt.Printf("Guesses matched: %s\n\n", matched)
+		printMatch(guessMatched)
 		attemptsCnt++
 	}
 
