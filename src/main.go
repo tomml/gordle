@@ -40,9 +40,9 @@ func getuserInput() (string, error) {
 
 func printGreetingRules() {
 	fmt.Println("### Hey, wanna play worlde? ###")
-	fmt.Println("A perfect match is marked as 'g'")
-	fmt.Println("A word in match is marked as 'y'")
-	fmt.Println("       No match is marked as 'x'")
+	fmt.Println("A perfect match is marked" + "\033[32m " + "green" + "\033[0m")
+	fmt.Println("A word in match is marked" + "\033[33m " + "yellow" + "\033[0m")
+	fmt.Println("       No match is marked" + "\033[37m " + "grey" + "\033[0m")
 	fmt.Println()
 }
 
@@ -82,6 +82,10 @@ func main() {
 			}
 		}
 
+		for i := range guessMatched {
+			guessMatched[i] = guessMatchedType{m: 0, s: "x"}
+		}
+
 		for i := 0; i < words.WordMaxLength; i++ {
 			if byte(guess[i]) == byte(wordtoguess[i]) { // check for perfect match
 				guessMatched[i].s = "g"
@@ -95,7 +99,7 @@ func main() {
 			} else { // check for in-word match
 				matchedCnt = 0
 				for j := 0; j < words.WordMaxLength; j++ {
-					if byte(guess[i]) == byte(wordtoguess[j]) {
+					if byte(guess[i]) == byte(wordtoguess[j]) && guessMatched[j].s != "g" {
 						guessMatched[i].s = "y"
 						guessMatched[i].m = guess[i]
 						matchedCnt++
