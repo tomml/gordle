@@ -10,4 +10,15 @@ nah
 
 # Version
 
-0.1 First version
+1.0
+
+- Improved matching algorithm
+- Minor changes
+
+0.2  
+
+- Added coloured output
+
+0.1  
+
+- First version
