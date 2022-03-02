@@ -18,7 +18,6 @@ type guessMatchedType struct {
 }
 
 func getuserInput() (string, error) {
-
 	var input string = ""
 	var inputerr error = nil
 
@@ -46,7 +45,7 @@ func printGreetingRules() {
 	fmt.Println()
 }
 
-func printMatch(matched []guessMatchedType) {
+func printResult(matched []guessMatchedType) {
 	for _, item := range matched {
 		if item.s == "g" {
 			fmt.Print("\033[42m\033[1;30m")
@@ -61,65 +60,77 @@ func printMatch(matched []guessMatchedType) {
 	fmt.Println()
 }
 
-func main() {
+func matchWords(guess, wordToGuess string) ([]guessMatchedType, bool) {
 	guessMatched := make([]guessMatchedType, 5)
 	var guessIsCorrect bool
-	var matchedCnt, attemptsCnt int
+	var matchCnt int
+
+	// Init with guess string and mark all with x
+	for i := range guessMatched {
+		guessMatched[i] = guessMatchedType{m: guess[i], s: "x"}
+	}
+
+	for i := 0; i < words.WordMaxLength; i++ {
+		// check for perfect match
+		if guess[i] == wordToGuess[i] {
+			guessMatched[i].s = "g"
+			guessMatched[i].m = guess[i]
+			// Remove character from word to guess to have no other match again
+			wordToGuess = strings.Replace(wordToGuess, string(guess[i]), " ", 1)
+			matchCnt++
+			if matchCnt == words.WordMaxLength {
+				guessIsCorrect = true
+				break
+			}
+		}
+	}
+
+	// check for in-word match
+	for i := 0; i < words.WordMaxLength; i++ {
+		if strings.Contains(wordToGuess, string(guess[i])) && guessMatched[i].s != "g" {
+			guessMatched[i].s = "y"
+			guessMatched[i].m = guess[i]
+			// Remove character from word to guess to have no other match again
+			wordToGuess = strings.Replace(wordToGuess, string(guess[i]), " ", 1)
+		}
+	}
+
+	return guessMatched, guessIsCorrect
+}
+
+func main() {
 	var guess string
 	var err error
+	var attempts int = 1
 
+	// Print the program greetings to the console
 	printGreetingRules()
-
 	// Get a random word from the list
-	wordtoguess := words.GetRandomWordFromList()
+	wordToGuess := words.GetRandomWordFromList()
 
-	for x := 0; x < guessMaxLength && !guessIsCorrect; x++ {
+	for {
 		for {
+			// Get a valid guess from the console
 			if guess, err = getuserInput(); err != nil {
 				fmt.Println(err)
 			} else {
 				break // User input is valid
 			}
 		}
+		// match the guess with the word to guess
+		resultMatches, guessIsCorrect := matchWords(guess, wordToGuess)
+		// ... and print the resulting match string
+		printResult(resultMatches)
 
-		for i := range guessMatched {
-			guessMatched[i] = guessMatchedType{m: 0, s: "x"}
-		}
-
-		for i := 0; i < words.WordMaxLength; i++ {
-			if byte(guess[i]) == byte(wordtoguess[i]) { // check for perfect match
-				guessMatched[i].s = "g"
-				guessMatched[i].m = guess[i]
-				matchedCnt++
-				if matchedCnt == words.WordMaxLength {
-					guessIsCorrect = true
-					break
-				}
-				continue
-			} else { // check for in-word match
-				matchedCnt = 0
-				for j := 0; j < words.WordMaxLength; j++ {
-					if byte(guess[i]) == byte(wordtoguess[j]) && guessMatched[j].s != "g" {
-						guessMatched[i].s = "y"
-						guessMatched[i].m = guess[i]
-						matchedCnt++
-					}
-				}
-				if matchedCnt == 0 { // check for no match
-					guessMatched[i].s = "x"
-					guessMatched[i].m = guess[i]
-				}
+		if guessIsCorrect || attempts >= guessMaxLength {
+			if guessIsCorrect {
+				fmt.Printf("Word to guess: %s. GREAT!!!\n", wordToGuess)
+				fmt.Printf("Your attempts: %d\n", attempts)
+			} else {
+				fmt.Printf("Try next time! The word you were looking for was: %s\n", wordToGuess)
 			}
-			matchedCnt = 0
+			break
 		}
-		printMatch(guessMatched)
-		attemptsCnt++
-	}
-
-	if guessIsCorrect {
-		fmt.Printf("Word to guess: %s. GREAT!!!\n", wordtoguess)
-		fmt.Printf("Your attempts: %d\n", attemptsCnt)
-	} else {
-		fmt.Printf("Try next time! The word you were looking for was: %s\n", wordtoguess)
+		attempts++
 	}
 }
