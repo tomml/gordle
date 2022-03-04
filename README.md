@@ -10,6 +10,11 @@ nah
 
 # Version
 
+1.1
+
+- Added check for guess is in the wordlist
+- Removed string delimiter
+
 1.0
 
 - Improved matching algorithm
