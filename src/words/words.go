@@ -2,6 +2,7 @@ package words
 
 import (
 	"math/rand"
+	"sort"
 	"time"
 )
 
@@ -13,6 +14,12 @@ func init() {
 
 func GetRandomWordFromList() string {
 	return wordsList[rand.Intn(len(wordsList))]
+}
+
+func CheckGuessIsInList(guess string) bool {
+	sort.Strings(wordsList)
+	i := sort.SearchStrings(wordsList, guess)
+	return (i < len(wordsList) && wordsList[i] == guess)
 }
 
 var (

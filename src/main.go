@@ -17,8 +17,7 @@ type guessMatchedType struct {
 	s string // status of guess, either g, y or x
 }
 
-func getuserInput() (string, error) {
-	var input string = ""
+func getValidUserInput() (string, error) {
 	var inputerr error = nil
 
 	fmt.Print("Enter your guess: ")
@@ -34,7 +33,7 @@ func getuserInput() (string, error) {
        Remember: Your guess has to be a valid word of exactly five characters`)
 	}
 
-	return strings.ToUpper(input), inputerr
+	return strings.ToUpper(strings.Trim(input, "\n")), inputerr
 }
 
 func printGreetingRules() {
@@ -111,10 +110,15 @@ func main() {
 	for {
 		for {
 			// Get a valid guess from the console
-			if guess, err = getuserInput(); err != nil {
+			if guess, err = getValidUserInput(); err != nil {
 				fmt.Println(err)
 			} else {
-				break // User input is valid
+				if words.CheckGuessIsInList(guess) {
+					break // user input is valid and guess is in the list
+				} else {
+					fmt.Println(`your guess is not in the wordlist. 
+        Please provide a supported word.`)
+				}
 			}
 		}
 		// match the guess with the word to guess
